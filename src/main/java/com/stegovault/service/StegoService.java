@@ -1,4 +1,6 @@
 package com.stegovault.service;
 
-public class StegoService {
+public interface StegoService 
+{
+    
 }
