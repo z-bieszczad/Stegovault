@@ -1,4 +1,6 @@
 package com.stegovault.util;
+import com.stegovault.model.ParsedPayload;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -37,5 +39,34 @@ public class PayloadHelper {
         buffer.put(encryptedData);
 
         return buffer.array();
+    }
+
+
+    /**
+     * Parses the raw input payload and converts it into a ParsedPayload object.
+     *
+     * @param payload the raw payload data to be parsed
+     * @return a ParsedPayload object containing structured data
+     * @throws IllegalArgumentException if the input is invalid or cannot be parsed
+     */
+
+    public static ParsedPayload parsePayload(byte[] payload){
+        if (payload == null || payload.length < 4 + 16 + 16 + 32) {
+            throw new IllegalArgumentException("Invalid payload: too short");
+        }
+        ByteBuffer buffer=ByteBuffer.wrap(payload);
+
+        int length=buffer.getInt();
+
+        byte[] salt=new byte[16];
+        buffer.get(salt);
+        byte[] iv=new byte[16];
+        buffer.get(iv);
+        byte[] hash=new byte[32];
+        buffer.get(hash);
+        byte[] encryptedData=new byte[length];
+        buffer.get(encryptedData);
+
+        return new ParsedPayload(salt,iv,hash,encryptedData);
     }
 }
