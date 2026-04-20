@@ -34,4 +34,20 @@ public class LSBHelper {
     public static int getBit(int value, int position){
         return (value>>position)&1;
     }
+
+
+    /**
+     * Changes Byte[] payload to individual bits
+     *
+     * @param data payload that will be chnged
+     * @return bits table transformed from payload
+     */
+    public static int[] bytesToBits(byte[] data){
+        int[] bits=new int[data.length*8];
+        for(int i=0; i<data.length; i++){
+            for(int j=0; j<8; j++){
+                bits[i*8+j]=(data[i]>>(7-j))&1;
+            }
+        }return bits;
+    }
 }
