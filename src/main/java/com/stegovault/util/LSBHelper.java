@@ -1,5 +1,5 @@
 package com.stegovault.util;
-
+import java.awt.image.BufferedImage;
 
 /**
  *class for Least Significant Bit (LSB) operations on integer values.
@@ -50,4 +50,75 @@ public class LSBHelper {
             }
         }return bits;
     }
+
+    public static byte[] bitsToBytes(int[] bits){
+        int byteCount= bits.length/8;
+        byte[] result=new byte[byteCount];
+
+        for(int i=0; i<byteCount; i++){
+            int value=0;
+
+            for(int j=0; j<8; j++){
+                value=(value<<1)| bits[i*8+j];
+            }
+            result[i]=(byte)value;
+        }
+        return result;
+    }
+
+    public static void setLSB(BufferedImage image, int x, int y, int bit){
+        int rgb= image.getRGB(x, y);
+
+        int r=(rgb>>16) & 0xFF;
+        int g=(rgb >>8) & 0xFF;
+        int b= rgb & 0xFF;
+
+        r=setBit(r, 0, bit);
+
+        int newRGB=(r<<16)| (g<<8) | b;
+
+        image.setRGB(x,y,newRGB);
+
+    }
+
+    public static void encodeBitsToImage(BufferedImage image, int[] bits){
+        int bitIndex=0;
+
+        for(int y=0; y<image.getHeight(); y++){
+            for(int x=0; x<image.getWidth(); x++){
+
+                if(bitIndex >= bits.length){
+                    return;
+                }
+
+                setLSB(image, x, y, bits[bitIndex]);
+                bitIndex++;
+
+            }
+        }
+    }
+
+    public static int[] decodeBitsFromImage(BufferedImage image, int numberOfBits){
+        int[] bits=new int[numberOfBits];
+        int bitIndex=0;
+
+        for(int y=0; y<image.getHeight(); y++){
+            for(int x=0; x<image.getWidth(); x++){
+
+                if(bitIndex >= bits.length){
+                    return bits;
+                }
+
+                int rgb= image.getRGB(x, y);
+                int r=(rgb>>16)& 0xFF;
+
+                bits[bitIndex]=getBit(r,0);
+                bitIndex++;
+
+            }
+        }
+        return bits;
+    }
+
+
 }
