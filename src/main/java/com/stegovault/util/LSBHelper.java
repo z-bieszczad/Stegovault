@@ -42,6 +42,7 @@ public class LSBHelper {
      * @param data payload that will be chnged
      * @return bits table transformed from payload
      */
+
     public static int[] bytesToBits(byte[] data){
         int[] bits=new int[data.length*8];
         for(int i=0; i<data.length; i++){
@@ -51,6 +52,7 @@ public class LSBHelper {
         }return bits;
     }
 
+    // do odzyskiwania
     public static byte[] bitsToBytes(int[] bits){
         int byteCount= bits.length/8;
         byte[] result=new byte[byteCount];
@@ -66,6 +68,15 @@ public class LSBHelper {
         return result;
     }
 
+    // na razie tylko kanal czerowny !!!!
+    /**
+     * Sets the least significant bit (LSB) of a pixel's color channels. ##### NA RAZIE TYLKO CZERWONY KANAL !
+     *
+     * @param image the image with pixel to modify
+     * @param x the x-coordinate of the pixel
+     * @param y the y-coordinate of the pixel
+     * @param bit the bit value to embed (0 or 1)
+     */
     public static void setLSB(BufferedImage image, int x, int y, int bit){
         int rgb= image.getRGB(x, y);
 
@@ -73,7 +84,7 @@ public class LSBHelper {
         int g=(rgb >>8) & 0xFF;
         int b= rgb & 0xFF;
 
-        r=setBit(r, 0, bit);
+        r=setBit(r, 0, bit); // tylko dla czwerownego
 
         int newRGB=(r<<16)| (g<<8) | b;
 
@@ -112,7 +123,7 @@ public class LSBHelper {
                 int rgb= image.getRGB(x, y);
                 int r=(rgb>>16)& 0xFF;
 
-                bits[bitIndex]=getBit(r,0);
+                bits[bitIndex]=getBit(r,0); // tu tez na razie tylko dla czerwonego
                 bitIndex++;
 
             }
