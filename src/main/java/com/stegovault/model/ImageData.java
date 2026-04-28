@@ -4,6 +4,7 @@ package com.stegovault.model;
 import java.awt.image.BufferedImage;
 import java.nio.file.Path;
 
+// zrobione na przyszlosc do uzycia w stegoservice i do zamiany za bufferedimage
 
 /**
  * Represents a carrier image used in steganography.
