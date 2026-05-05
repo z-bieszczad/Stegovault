@@ -78,17 +78,35 @@ public class LSBHelper {
      * @param bit the bit value to embed (0 or 1)
      */
     public static void setLSB(BufferedImage image, int x, int y, int bit){
-        int rgb= image.getRGB(x, y);
+//        int rgb= image.getRGB(x, y);
+//
+//        int r=(rgb>>16) & 0xFF;
+//        int g=(rgb >>8) & 0xFF;
+//        int b= rgb & 0xFF;
+//
+//        r=setBit(r, 0, bit); // tylko dla czwerownego
+//
+//        int newRGB=(r<<16)| (g<<8) | b;
+//
+//        image.setRGB(x,y,newRGB);
 
-        int r=(rgb>>16) & 0xFF;
-        int g=(rgb >>8) & 0xFF;
-        int b= rgb & 0xFF;
+        int rgb = image.getRGB(x, y);
 
-        r=setBit(r, 0, bit); // tylko dla czwerownego
+        int alpha = (rgb >> 24) & 0xFF;
+        int r = (rgb >> 16) & 0xFF;
+        int g = (rgb >> 8) & 0xFF;
+        int b = rgb & 0xFF;
 
-        int newRGB=(r<<16)| (g<<8) | b;
+        r = setBit(r, 0, bit);
 
-        image.setRGB(x,y,newRGB);
+        int newRGB =
+                (alpha << 24) |
+                        (r << 16) |
+                        (g << 8) |
+                        b;
+
+        image.setRGB(x, y, newRGB);
+//
 
     }
 

@@ -33,7 +33,8 @@ public class StegoServiceImpl implements StegoService {
         byte[] plainData=text.getBytes();
 
         byte[] encrypted=cryptoService.encrypt(plainData, config);
-
+        System.out.println("encrypted length = " + encrypted.length);
+        System.out.println("encrypted first byte = " + encrypted[0]);
 
         byte[] hash = new byte[32]; // na razie na chwile !!!!!!!!!!!!!!!!!!!!!!!!!! ############ trzeba zrobić hashService !!!!!!!!!!!!!!!!
 
@@ -41,7 +42,8 @@ public class StegoServiceImpl implements StegoService {
 
         int[] bits= LSBHelper.bytesToBits(payload);
 
-        if(!validationService.validateCapacity(image, payload.length)){
+
+        if(!validationService.validateCapacity(image, bits.length)){
             throw new IllegalArgumentException(" image to small ");
         }
 
@@ -51,8 +53,20 @@ public class StegoServiceImpl implements StegoService {
     }
 
     @Override
-    public String decode(BufferedImage image, EncryptionConfig cfg) throws Exception{
-        return new String();
+    public String decode(BufferedImage image, EncryptionConfig config) throws Exception{
+
+        //int totalBits=image.getWidth()*image.getHeight();
+        int totalBits= 84 * 8; //   HARDCODED DO TESTOW
+
+        int[] bits=LSBHelper.decodeBitsFromImage(image, totalBits);
+
+        byte[] payload= LSBHelper.bitsToBytes(bits);
+
+        ParsedPayload data=PayloadHelper.parsePayload(payload);
+
+        byte[] decrypted=cryptoService.decrypt(data.encryptedData(), config);
+
+        return new String(decrypted);
     }
 
 }
