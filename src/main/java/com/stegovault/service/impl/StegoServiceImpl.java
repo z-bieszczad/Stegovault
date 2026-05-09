@@ -10,6 +10,7 @@ import com.stegovault.util.LSBHelper;
 import com.stegovault.util.PayloadHelper;
 
 import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
 
 public class StegoServiceImpl implements StegoService {
 
@@ -55,8 +56,7 @@ public class StegoServiceImpl implements StegoService {
     @Override
     public String decode(BufferedImage image, EncryptionConfig config) throws Exception{
 
-        //int totalBits=image.getWidth()*image.getHeight();
-        int totalBits= 84 * 8; //   HARDCODED DO TESTOW
+        int totalBits=image.getWidth()*image.getHeight()*3;
 
         int[] bits=LSBHelper.decodeBitsFromImage(image, totalBits);
 

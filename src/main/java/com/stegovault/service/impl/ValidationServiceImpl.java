@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 public class ValidationServiceImpl implements ValidationService{
     @Override
     public boolean validateCapacity(BufferedImage image, int payloadSizeBytes){
-        int avaliableBits=image.getWidth()* image.getHeight();// na razie jesen bit (dla R) #####       potem *3
+        int avaliableBits=image.getWidth()* image.getHeight()*3;// na razie jesen bit (dla R) #####       potem *3
 
         int requiredBits=payloadSizeBytes*8;
 

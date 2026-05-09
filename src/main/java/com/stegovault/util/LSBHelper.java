@@ -68,7 +68,7 @@ public class LSBHelper {
         return result;
     }
 
-    // na razie tylko kanal czerowny !!!!
+    // juz dla wszystkich kanałów
     /**
      * Sets the least significant bit (LSB) of a pixel's color channels. ##### NA RAZIE TYLKO CZERWONY KANAL !
      *
@@ -77,18 +77,7 @@ public class LSBHelper {
      * @param y the y-coordinate of the pixel
      * @param bit the bit value to embed (0 or 1)
      */
-    public static void setLSB(BufferedImage image, int x, int y, int bit){
-//        int rgb= image.getRGB(x, y);
-//
-//        int r=(rgb>>16) & 0xFF;
-//        int g=(rgb >>8) & 0xFF;
-//        int b= rgb & 0xFF;
-//
-//        r=setBit(r, 0, bit); // tylko dla czwerownego
-//
-//        int newRGB=(r<<16)| (g<<8) | b;
-//
-//        image.setRGB(x,y,newRGB);
+    public static void setLSB(BufferedImage image, int x, int y, int channel, int bit){
 
         int rgb = image.getRGB(x, y);
 
@@ -97,7 +86,12 @@ public class LSBHelper {
         int g = (rgb >> 8) & 0xFF;
         int b = rgb & 0xFF;
 
-        r = setBit(r, 0, bit);
+        //r = setBit(r, 0, bit);
+        switch (channel) {
+            case 0-> r=setBit(r,0,bit);
+            case 1-> g=setBit(g,0,bit);
+            case 2-> b=setBit(b,0,bit);
+        }
 
         int newRGB =
                 (alpha << 24) |
@@ -116,16 +110,31 @@ public class LSBHelper {
         for(int y=0; y<image.getHeight(); y++){
             for(int x=0; x<image.getWidth(); x++){
 
-                if(bitIndex >= bits.length){
-                    return;
+                for(int channel=0; channel<3; channel++){
+
+                    if(bitIndex >= bits.length){
+                        return;
+                    }
+
+                    setLSB(image, x, y,channel, bits[bitIndex]);
+                    bitIndex++;
                 }
 
-                setLSB(image, x, y, bits[bitIndex]);
-                bitIndex++;
 
             }
         }
     }
+
+//    if(bitIndex >= bits.length){
+//        return bits;
+//    }
+//
+//    int rgb= image.getRGB(x, y);
+//    int r=(rgb>>16)& 0xFF;
+//
+//    bits[bitIndex]=getBit(r,0); // tu tez na razie tylko dla czerwonego
+//    bitIndex++;
+
 
     public static int[] decodeBitsFromImage(BufferedImage image, int numberOfBits){
         int[] bits=new int[numberOfBits];
@@ -134,16 +143,22 @@ public class LSBHelper {
         for(int y=0; y<image.getHeight(); y++){
             for(int x=0; x<image.getWidth(); x++){
 
-                if(bitIndex >= bits.length){
-                    return bits;
+                int rgb=image.getRGB(x,y);
+
+                int r= (rgb>> 16)&1;
+                int g= (rgb>> 8)& 1;
+                int b= rgb& 1;
+
+                int[] channels={r,g,b};
+
+                for(int c=0; c<3; c++){
+
+                    if(bitIndex >= numberOfBits){
+                        return bits;
+                    }
+
+                    bits[bitIndex++] = channels[c];
                 }
-
-                int rgb= image.getRGB(x, y);
-                int r=(rgb>>16)& 0xFF;
-
-                bits[bitIndex]=getBit(r,0); // tu tez na razie tylko dla czerwonego
-                bitIndex++;
-
             }
         }
         return bits;
