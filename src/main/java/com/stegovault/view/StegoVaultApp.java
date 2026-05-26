@@ -1,15 +1,23 @@
 package com.stegovault.view;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class StegoVaultApp extends Application{
 
     @Override
-    public void start(Stage stage){
-        stage.setTitle("StegoVault");
-        stage.show();
+    public void start(Stage stage)throws Exception{
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/fxml/main-view.fxml")
+        );
 
+        Scene scene = new Scene(loader.load());
+
+        stage.setTitle("StegoVault");
+        stage.setScene(scene);
+        stage.show();
 
     }
 
