@@ -1,7 +1,7 @@
 package com.stegovault.util;
-import com.stegovault.model.ParsedPayload;
-
 import java.nio.ByteBuffer;
+
+import com.stegovault.model.ParsedPayload;
 
 /**
  * Klasa pomocnicza odpowiedzialna za tworzenie i obsługę struktury payloadu

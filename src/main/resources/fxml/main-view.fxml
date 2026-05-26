@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.stegovault.controller.MainController"
+        spacing="20"
+        alignment="CENTER">
+    <Button text="EMBED" onAction="#onEmbed"/>
+    <Button text="EXTRACT" onAction="#onExtract"/>
+
+
+</VBox>
