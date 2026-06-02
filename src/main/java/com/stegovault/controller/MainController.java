@@ -21,8 +21,15 @@ public class MainController {
         stage.setScene(scene);
     }
 
-    public void onExtract(){
+    public void onExtract(ActionEvent event) throws Exception{
         System.out.println("EXTRACT cliked");
-    }
 
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/extract-view.fxml"));
+
+        Scene scene = new Scene(loader.load());
+
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+        stage.setScene(scene);
+    }
 }

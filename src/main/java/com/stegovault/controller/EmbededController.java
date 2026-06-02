@@ -69,8 +69,6 @@ public class EmbededController {
 
     public void onEncode() {
 
-
-
         System.out.println("ENCODE");
         System.out.println(txtPathField.getText());
         System.out.println(imagePathField.getText());
