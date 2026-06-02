@@ -9,6 +9,7 @@ import com.stegovault.service.impl.CryptoServiceImpl;
 import com.stegovault.service.impl.HashServiceImpl;
 import com.stegovault.service.impl.StegoServiceImpl;
 import com.stegovault.service.impl.ValidationServiceImpl;
+import com.stegovault.util.CryptoUtil;
 import com.stegovault.util.FileUtil;
 import com.stegovault.util.ImageUtil;
 import com.sun.javafx.reflect.FieldUtil;
@@ -17,6 +18,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.scene.control.Alert;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -90,17 +92,36 @@ public class EmbededController {
 
             System.out.println(" image size= "+image.getHeight()+"x"+image.getWidth());
 
+            byte[] salt = CryptoUtil.generateSalt();
+            byte[] iv = CryptoUtil.generateIV();
+
             EncryptionConfig config=new EncryptionConfig(passwordField.getText(), new byte[16], new byte[16], 65536); // na razie hardcode soli i iv trzeba zrobić utils do generowania tego losowo
 
             BufferedImage encodedImage= stego.encode(text, config, image);
 
             ImageUtil.writePNG(encodedImage, Path.of("output.png"));
 
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+
+            alert.setTitle("Success");
+            alert.setHeaderText(null);
+            alert.setContentText("Image encoded successfully.");
+
+            alert.showAndWait();
+
             System.out.println("ENCODE DONE");
 
 
         }catch(Exception e){
             e.printStackTrace(); // na razue chwilowo potem sie doda Alerty
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+
+            alert.setTitle("Error");
+            alert.setHeaderText("Operation failed");
+            alert.setContentText(e.getMessage());
+
+            alert.showAndWait();
+
 
         }
 //

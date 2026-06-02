@@ -16,7 +16,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
+import javafx.scene.control.Alert;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -66,11 +66,26 @@ public class ExtractController {
 
             String text=stego.decode(image, config);
 
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+
+            alert.setTitle("Success");
+            alert.setHeaderText(null);
+            alert.setContentText("text extracted successfully.");
+
+            alert.showAndWait();
+
             resultArea.setText(text);
 
             System.out.println("DECODE DOONE");
         }catch(Exception e){
             e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+
+            alert.setTitle("Error");
+            alert.setHeaderText("Operation failed");
+            alert.setContentText(e.getMessage());
+
+            alert.showAndWait();
         }
     }
 
