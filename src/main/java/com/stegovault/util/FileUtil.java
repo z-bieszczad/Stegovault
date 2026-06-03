@@ -19,5 +19,9 @@ public class FileUtil {
         Files.write(path, data);
     }
 
+    public static void writeText(String content, Path path)throws IOException{
+        Files.writeString(path, content);
+    }
+
 
 }

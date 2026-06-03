@@ -9,6 +9,7 @@ import com.stegovault.service.impl.CryptoServiceImpl;
 import com.stegovault.service.impl.HashServiceImpl;
 import com.stegovault.service.impl.StegoServiceImpl;
 import com.stegovault.service.impl.ValidationServiceImpl;
+import com.stegovault.util.FileUtil;
 import com.stegovault.util.ImageUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
@@ -66,11 +67,14 @@ public class ExtractController {
 
             String text=stego.decode(image, config);
 
+            Path output=Path.of("decoded.txt");
+            FileUtil.writeText(text, output);
+
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
             alert.setTitle("Success");
             alert.setHeaderText(null);
-            alert.setContentText("text extracted successfully.");
+            alert.setContentText("text extracted successfully and saved to decoded.txt.");
 
             alert.showAndWait();
 
