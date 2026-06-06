@@ -12,118 +12,155 @@ import com.stegovault.service.impl.ValidationServiceImpl;
 import com.stegovault.util.CryptoUtil;
 import com.stegovault.util.FileUtil;
 import com.stegovault.util.ImageUtil;
-import com.sun.javafx.reflect.FieldUtil;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.scene.control.Alert;
 
-import java.awt.*;
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Path;
 
 public class EmbededController {
+
+    @FXML private VBox rootPane;
+    @FXML private TextField txtPathField;
+    @FXML private TextField imagePathField;
+    @FXML private PasswordField passwordField;
+    @FXML private Label statusLabel;
+    @FXML private Label passwordHint;
+    @FXML private ProgressBar progressBar;
+    @FXML private ProgressBar capacityBar;
+    @FXML private Label capacityLabel;
+    @FXML private HBox capacityRow;
+
+    private final CryptoService crypto = new CryptoServiceImpl();
+    private final ValidationService validation = new ValidationServiceImpl();
+    private final HashService hash = new HashServiceImpl();
+    private final StegoService stego = new StegoServiceImpl(crypto, validation, hash);
+
+    private BufferedImage loadedImage = null;
+
     @FXML
-    private TextField txtPathField;
-    @FXML
-    private TextField imagePathField;
-    @FXML
-    private PasswordField passwordField;
-
-    private final CryptoService crypto=new CryptoServiceImpl();
-    private final ValidationService validation=new ValidationServiceImpl();
-    private final HashService hash=new HashServiceImpl();
-    private final StegoService stego= new StegoServiceImpl(crypto, validation, hash);
-
-    public void onChooseTXT(){
-        System.out.println("choose txt");
-
-        FileChooser chooser=new FileChooser();
-
-        chooser.setTitle("choose TXT file");
-
-        File file=chooser.showOpenDialog(new Stage());
-
-        if (file != null) {
-            txtPathField.setText(file.getAbsolutePath());
-        }
-
+    public void initialize() {
+        passwordField.textProperty().addListener((obs, old, val) -> {
+            if (val.isEmpty()) {
+                passwordHint.setText("Min 8 chars · uppercase · lowercase · digit");
+                passwordHint.setStyle("");
+            } else if (validation.validatePassword(val)) {
+                passwordHint.setText("✔ Password valid");
+                passwordHint.setStyle("-fx-text-fill: #4caf7d;");
+            } else {
+                passwordHint.setText("✘ Min 8 chars · uppercase · lowercase · digit");
+                passwordHint.setStyle("-fx-text-fill: #e06c75;");
+            }
+        });
     }
 
-    public void onChooseImage(){
-        System.out.println("choose image");
+    public void onBack(ActionEvent event) throws Exception {
+        MainController.loadView("/fxml/main-view.fxml", rootPane);
+    }
 
+    public void onChooseTXT() {
         FileChooser chooser = new FileChooser();
+        chooser.setTitle("Choose TXT file");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text files", "*.txt"));
+        File file = chooser.showOpenDialog(getStage());
+        if (file != null) {
+            txtPathField.setText(file.getAbsolutePath());
+            // updateCapacity();
+            setStatus("TXT file selected.", false);
+        }
+    }
 
+    public void onChooseImage() {
+        FileChooser chooser = new FileChooser();
         chooser.setTitle("Choose Image");
-
         chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images", "*.png", "*.bmp"));
-
-        File file = chooser.showOpenDialog(new Stage());
-
+        File file = chooser.showOpenDialog(getStage());
         if (file != null) {
             imagePathField.setText(file.getAbsolutePath());
+            try {
+                loadedImage = ImageIO.read(file);
+                // updateCapacity();
+                setStatus("Image loaded: " + loadedImage.getWidth() + "×" + loadedImage.getHeight(), false);
+            } catch (Exception e) {
+                setStatus("Could not read image.", true);
+                loadedImage = null;
+            }
         }
     }
 
     public void onEncode() {
+        String txtPath = txtPathField.getText().trim();
+        String imagePath = imagePathField.getText().trim();
+        String password = passwordField.getText();
 
-        System.out.println("ENCODE");
-        System.out.println(txtPathField.getText());
-        System.out.println(imagePathField.getText());
-        System.out.println(passwordField.getText());
-
-        Path txtPath= Path.of(txtPathField.getText());
-        Path imagePath=Path.of(imagePathField.getText());
-        String password=passwordField.getText();
-
-
-        try{
-            byte[] textBytes= FileUtil.read(txtPath);
-
-            String text = new String(FileUtil.read(txtPath));
-
-            BufferedImage image= ImageUtil.read(imagePath);
-
-            System.out.println(" text Bytes= "+textBytes.length);
-
-            System.out.println(" image size= "+image.getHeight()+"x"+image.getWidth());
-
-            byte[] salt = CryptoUtil.generateSalt();
-            byte[] iv = CryptoUtil.generateIV();
-
-            EncryptionConfig config=new EncryptionConfig(passwordField.getText(), new byte[16], new byte[16], 65536); // na razie hardcode soli i iv trzeba zrobić utils do generowania tego losowo
-
-            BufferedImage encodedImage= stego.encode(text, config, image);
-
-            ImageUtil.writePNG(encodedImage, Path.of("output.png"));
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-
-            alert.setTitle("Success");
-            alert.setHeaderText(null);
-            alert.setContentText("Image encoded successfully.");
-
-            alert.showAndWait();
-
-            System.out.println("ENCODE DONE");
-
-
-        }catch(Exception e){
-            e.printStackTrace(); // na razue chwilowo potem sie doda Alerty
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-
-            alert.setTitle("Error");
-            alert.setHeaderText("Operation failed");
-            alert.setContentText(e.getMessage());
-
-            alert.showAndWait();
-
-
+        if (txtPath.isEmpty() || imagePath.isEmpty()) {
+            setStatus("Please select both a TXT file and an image.", true);
+            return;
         }
-//
+        if (!validation.validatePassword(password)) {
+            setStatus("Invalid password. Min 8 chars, uppercase, lowercase, digit.", true);
+            return;
+        }
+
+        progressBar.setVisible(true);
+        progressBar.setManaged(true);
+        progressBar.setProgress(-1);
+
+        new Thread(() -> {
+            try {
+                String text = new String(FileUtil.read(Path.of(txtPath)));
+                BufferedImage image = ImageUtil.read(Path.of(imagePath));
+
+                byte[] salt = CryptoUtil.generateSalt();
+                byte[] iv = CryptoUtil.generateIV();
+                EncryptionConfig config = new EncryptionConfig(password, salt, iv, 100_000);
+
+                BufferedImage encoded = stego.encode(text, config, image);
+
+                Path outputPath = Path.of(imagePath).getParent().resolve("output.png");
+                ImageUtil.writePNG(encoded, outputPath);
+
+                Platform.runLater(() -> {
+                    progressBar.setProgress(1.0);
+                    setStatus("✔ Saved to: " + outputPath, false);
+                    showAlert(Alert.AlertType.INFORMATION, "Success",
+                            "Message embedded successfully.\nSaved to: " + outputPath);
+                });
+
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    progressBar.setVisible(false);
+                    progressBar.setManaged(false);
+                    setStatus("Error: " + e.getMessage(), true);
+                    showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+                });
+            }
+        }).start();
+    }
+
+    private void setStatus(String message, boolean isError) {
+        statusLabel.setText(message);
+        statusLabel.getStyleClass().removeAll("status-ok", "status-err");
+        statusLabel.getStyleClass().add(isError ? "status-err" : "status-ok");
+    }
+
+    private Stage getStage() {
+        return (Stage) txtPathField.getScene().getWindow();
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

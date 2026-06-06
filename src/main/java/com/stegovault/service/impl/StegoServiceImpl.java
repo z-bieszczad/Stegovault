@@ -63,10 +63,8 @@ public class StegoServiceImpl implements StegoService {
 
         ParsedPayload data=PayloadHelper.parsePayload(payload);
 
-        byte[] decrypted=cryptoService.decrypt(data.encryptedData(), config);
-
-        // rzuca wyjatek gdy hash sie nie zgadza
-        hashService.verifyHash(decrypted, data.hash());
+        EncryptionConfig actualConfig = new EncryptionConfig(config.password(), data.salt(), data.iv(), config.iterations());
+        byte[] decrypted = cryptoService.decrypt(data.encryptedData(), actualConfig);
 
         return new String(decrypted);
     }

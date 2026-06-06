@@ -1,24 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.stegovault.controller.EmbededController" spacing="15" alignment="CENTER">
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.stegovault.controller.EmbededController"
+      fx:id="rootPane"
+      spacing="10"
+      prefWidth="500"
+      prefHeight="440"
+      style="-fx-padding: 32;">
 
-    <TextField fx:id="txtPathField" promptText="TXT file"/>
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Button text="← Back" styleClass="button-ghost" onAction="#onBack"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Embed Message" styleClass="label-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+    </HBox>
 
-    <Button text="choose TXT " onAction="#onChooseTXT"/>
+    <Separator/>
+    <Region prefHeight="4"/>
 
-    <TextField fx:id="imagePathField" promptText="image file"/>
+    <Label text="TEXT FILE" styleClass="label-section"/>
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <TextField fx:id="txtPathField" promptText="No file selected"
+                   prefWidth="370" editable="false" HBox.hgrow="ALWAYS"/>
+        <Button text="Browse" onAction="#onChooseTXT" prefWidth="88"/>
+    </HBox>
 
-    <Button text="choose image" onAction="#onChooseImage"/>
+    <Label text="CARRIER IMAGE  (PNG / BMP)" styleClass="label-section"/>
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <TextField fx:id="imagePathField" promptText="No file selected"
+                   prefWidth="370" editable="false" HBox.hgrow="ALWAYS"/>
+        <Button text="Browse" onAction="#onChooseImage" prefWidth="88"/>
+    </HBox>
 
-    <PasswordField fx:id="passwordField" promptText="password"/>
+    <HBox fx:id="capacityRow" spacing="8" alignment="CENTER_LEFT"
+          visible="false" managed="false">
+        <Label text="Capacity:" styleClass="label-subtitle"/>
+        <ProgressBar fx:id="capacityBar" prefWidth="280" prefHeight="8"/>
+        <Label fx:id="capacityLabel" styleClass="label-subtitle"/>
+    </HBox>
 
-    <Button text="ENCODE" onAction="#onEncode"/>
+    <Label text="PASSWORD" styleClass="label-section"/>
+    <PasswordField fx:id="passwordField"
+                   promptText="Min 8 chars, upper, lower, digit"/>
+    <Label fx:id="passwordHint"
+           text="Min 8 chars · uppercase · lowercase · digit"
+           styleClass="label-subtitle"/>
 
+    <Region prefHeight="6"/>
 
+    <Button text="ENCODE &amp; SAVE" onAction="#onEncode"
+            styleClass="button-primary" maxWidth="Infinity"/>
+
+    <ProgressBar fx:id="progressBar" maxWidth="Infinity" prefHeight="6"
+                 progress="0" visible="false" managed="false"/>
+
+    <Label fx:id="statusLabel" text="" wrapText="true" maxWidth="Infinity"/>
 
 </VBox>
