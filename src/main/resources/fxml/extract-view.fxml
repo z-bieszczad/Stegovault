@@ -17,6 +17,8 @@
     <Button text="Choose Image"
             onAction="#onChooseImage"/>
 
+    <Button text="Back" onAction="#onBack"/>
+
     <PasswordField fx:id="passwordField"
                    promptText="Password"/>
 

@@ -22,6 +22,7 @@
     <PasswordField fx:id="passwordField" promptText="password"/>
 
     <Button text="ENCODE" onAction="#onEncode"/>
+    <Button text="Back" onAction="#onBack"/>
 
     <ProgressBar fx:id="progressBar"
                  prefWidth="300"
@@ -46,6 +47,8 @@
                        fitHeight="300"
                        preserveRatio="true"/>
         </VBox>
+
+
 
     </HBox>
 

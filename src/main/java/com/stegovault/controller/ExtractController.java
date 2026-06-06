@@ -12,6 +12,8 @@ import com.stegovault.service.impl.ValidationServiceImpl;
 import com.stegovault.util.FileUtil;
 import com.stegovault.util.ImageUtil;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -21,6 +23,7 @@ import javafx.scene.control.Alert;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 
 public class ExtractController {
@@ -36,6 +39,16 @@ public class ExtractController {
     private final ValidationService validation=new ValidationServiceImpl();
     private final HashService hash=new HashServiceImpl();
     private final StegoService stego= new StegoServiceImpl(crypto, validation, hash);
+
+    @FXML
+    public void onBack() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main-view.fxml"));
+        Scene scene = new Scene(loader.load());
+
+        Stage stage = (Stage) resultArea.getScene().getWindow();
+        stage.setScene(scene);
+        //System.out.println("BACK CLICKED");
+    }
 
     public void onChooseImage(){
         System.out.println("choose image");

@@ -14,6 +14,8 @@ import com.stegovault.util.FileUtil;
 import com.stegovault.util.ImageUtil;
 import com.sun.javafx.reflect.FieldUtil;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
@@ -24,9 +26,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
+import javafx.scene.Node;
 
 public class EmbededController {
     @FXML
@@ -46,6 +51,18 @@ public class EmbededController {
     private final ValidationService validation=new ValidationServiceImpl();
     private final HashService hash=new HashServiceImpl();
     private final StegoService stego= new StegoServiceImpl(crypto, validation, hash);
+
+
+    @FXML
+    public void onBack() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main-view.fxml"));
+        Scene scene = new Scene(loader.load());
+
+        Stage stage = (Stage) originalImageView.getScene().getWindow();
+        stage.setScene(scene);
+        //System.out.println("BACK CLICKED");
+    }
+
 
     public void onChooseTXT(){
         System.out.println("choose txt");
@@ -145,6 +162,10 @@ public class EmbededController {
 
 
         }
+
+
 //
     }
+
+
 }
