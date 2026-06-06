@@ -15,10 +15,13 @@ import com.stegovault.util.ImageUtil;
 import com.sun.javafx.reflect.FieldUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -32,6 +35,12 @@ public class EmbededController {
     private TextField imagePathField;
     @FXML
     private PasswordField passwordField;
+    @FXML
+    private ImageView originalImageView;
+    @FXML
+    private ImageView encodedImageView;
+    @FXML
+    private ProgressBar progressBar;
 
     private final CryptoService crypto=new CryptoServiceImpl();
     private final ValidationService validation=new ValidationServiceImpl();
@@ -66,6 +75,9 @@ public class EmbededController {
 
         if (file != null) {
             imagePathField.setText(file.getAbsolutePath());
+            Image image = new Image(file.toURI().toString());
+
+            originalImageView.setImage(image);
         }
     }
 
@@ -82,6 +94,8 @@ public class EmbededController {
 
 
         try{
+            progressBar.setProgress(0);
+
             byte[] textBytes= FileUtil.read(txtPath);
 
             String text = new String(FileUtil.read(txtPath));
@@ -97,9 +111,16 @@ public class EmbededController {
 
             EncryptionConfig config=new EncryptionConfig(passwordField.getText(), new byte[16], new byte[16], 65536); // na razie hardcode soli i iv trzeba zrobić utils do generowania tego losowo
 
+            progressBar.setProgress(0.5);
+
             BufferedImage encodedImage= stego.encode(text, config, image);
 
+            Image encodedPreview = new Image(Path.of("output.png").toUri().toString());
+
+            encodedImageView.setImage(encodedPreview);
             ImageUtil.writePNG(encodedImage, Path.of("output.png"));
+
+            progressBar.setProgress(1.0);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
 

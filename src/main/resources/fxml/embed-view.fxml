@@ -4,6 +4,10 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.ProgressBar?>
 
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.stegovault.controller.EmbededController" spacing="15" alignment="CENTER">
 
@@ -19,6 +23,32 @@
 
     <Button text="ENCODE" onAction="#onEncode"/>
 
+    <ProgressBar fx:id="progressBar"
+                 prefWidth="300"
+                 progress="0"/>
 
+    <HBox spacing="20" alignment="CENTER">
+
+        <VBox spacing="5" alignment="CENTER">
+            <Label text="Original Image"/>
+
+            <ImageView fx:id="originalImageView"
+                       fitWidth="300"
+                       fitHeight="300"
+                       preserveRatio="true"/>
+        </VBox>
+
+        <VBox spacing="5" alignment="CENTER">
+            <Label text="Encoded Image"/>
+
+            <ImageView fx:id="encodedImageView"
+                       fitWidth="300"
+                       fitHeight="300"
+                       preserveRatio="true"/>
+        </VBox>
+
+    </HBox>
 
 </VBox>
+
+
