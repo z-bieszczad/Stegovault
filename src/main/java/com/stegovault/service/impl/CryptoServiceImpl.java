@@ -42,9 +42,7 @@ public class CryptoServiceImpl implements CryptoService{
             );
             SecretKeyFactory factory = SecretKeyFactory.getInstance(KEY_ALGORITHM);
             byte[] keyBytes = factory.generateSecret(spec).getEncoded();
-            System.out.println("PASSWORD RAW: [" + cfg.password() + "]");
-            System.out.println("SALT: " + Arrays.toString(cfg.salt()));
-            System.out.println("ITER: " + cfg.iterations());
+
             return new SecretKeySpec(keyBytes, KEY_SPEC);
         } catch (Exception e) {
             throw new CryptoException("Derywacja klucza sie nie powiodla", e);

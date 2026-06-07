@@ -85,11 +85,6 @@ public class StegoServiceImpl implements StegoService {
 
         ParsedPayload data = PayloadHelper.parsePayload(payload);
 
-        System.out.println("SALT: " + Arrays.toString(data.salt()));
-        System.out.println("IV: " + Arrays.toString(data.iv()));
-        System.out.println("HASH: " + Arrays.toString(data.hash()));
-        System.out.println("ENCRYPTED SIZE: " + data.encryptedData().length);
-
         EncryptionConfig config = new EncryptionConfig(
                 password,
                 data.salt(),
