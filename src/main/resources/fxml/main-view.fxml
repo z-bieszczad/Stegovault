@@ -3,12 +3,35 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns:fx="http://javafx.com/fxml"
-        fx:controller="com.stegovault.controller.MainController"
-        spacing="20"
-        alignment="CENTER">
-    <Button text="EMBED" onAction="#onEmbed"/>
-    <Button text="EXTRACT" onAction="#onExtract"/>
+<!--<VBox xmlns:fx="http://javafx.com/fxml"-->
+<!--        fx:controller="com.stegovault.controller.MainController"-->
+<!--        spacing="20"-->
+<!--        alignment="CENTER">-->
+<!--    <Button text="EMBED" onAction="#onEmbed"/>-->
+<!--    <Button text="EXTRACT" onAction="#onExtract"/>-->
 
+
+<!--</VBox>-->
+
+
+<?import javafx.scene.control.Label?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.stegovault.controller.MainController"
+      spacing="20"
+      alignment="CENTER"
+      style="-fx-background-color: #1e1e2f;">
+
+    <Label text="StegoVault"
+           style="-fx-font-size: 28px; -fx-text-fill: white;"/>
+
+    <Button text="ENCODE"
+            onAction="#onEmbed"
+            prefWidth="200"
+            style="-fx-font-size: 14px;"/>
+
+    <Button text="DECODE"
+            onAction="#onExtract"
+            prefWidth="200"
+            style="-fx-font-size: 14px;"/>
 
 </VBox>

@@ -17,6 +17,9 @@ public class StegoVaultApp extends Application{
 
         stage.setTitle("StegoVault");
         stage.setScene(scene);
+//        stage.setWidth(600);
+//        stage.setHeight(500);
+//        //stage.setResizable(false);
         stage.show();
 
     }
