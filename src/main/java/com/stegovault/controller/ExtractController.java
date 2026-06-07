@@ -1,3 +1,99 @@
+//package com.stegovault.controller;
+//
+//import com.stegovault.model.EncryptionConfig;
+//import com.stegovault.service.CryptoService;
+//import com.stegovault.service.HashService;
+//import com.stegovault.service.StegoService;
+//import com.stegovault.service.ValidationService;
+//import com.stegovault.service.impl.CryptoServiceImpl;
+//import com.stegovault.service.impl.HashServiceImpl;
+//import com.stegovault.service.impl.StegoServiceImpl;
+//import com.stegovault.service.impl.ValidationServiceImpl;
+//import com.stegovault.util.FileUtil;
+//import com.stegovault.util.ImageUtil;
+//import javafx.fxml.FXML;
+//import javafx.scene.control.PasswordField;
+//import javafx.scene.control.TextArea;
+//import javafx.scene.control.TextField;
+//import javafx.stage.FileChooser;
+//import javafx.stage.Stage;
+//import javafx.scene.control.Alert;
+//import javax.swing.*;
+//import java.awt.image.BufferedImage;
+//import java.io.File;
+//import java.nio.file.Path;
+//
+//public class ExtractController {
+//
+//    @FXML
+//    private TextField imagePathField;
+//    @FXML
+//    private PasswordField passwordField;
+//    @FXML
+//    private TextArea resultArea;
+//
+//    private final CryptoService crypto=new CryptoServiceImpl();
+//    private final ValidationService validation=new ValidationServiceImpl();
+//    private final HashService hash=new HashServiceImpl();
+//    private final StegoService stego= new StegoServiceImpl(crypto, validation, hash);
+//
+//    public void onChooseImage(){
+//        System.out.println("choose image");
+//
+//        FileChooser chooser = new FileChooser();
+//
+//        chooser.setTitle("Choose Image");
+//
+//        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images", "*.png", "*.bmp"));
+//
+//        File file = chooser.showOpenDialog(new Stage());
+//
+//        if (file != null) {
+//            imagePathField.setText(file.getAbsolutePath());
+//        }
+//    }
+//
+//    public void onExtract() {
+//        System.out.println("extract");
+//
+//        try{
+//            Path imagePath= Path.of(imagePathField.getText());
+//
+//            String password=passwordField.getText();
+//
+//            BufferedImage image= ImageUtil.read(imagePath);
+//
+//            EncryptionConfig config=new EncryptionConfig(password,new byte[16], new byte[16], 65536);
+//
+//            String text=stego.decode(image, config);
+//
+//            Path output=Path.of("decoded.txt");
+//            FileUtil.writeText(text, output);
+//
+//            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//
+//            alert.setTitle("Success");
+//            alert.setHeaderText(null);
+//            alert.setContentText("text extracted successfully and saved to decoded.txt.");
+//
+//            alert.showAndWait();
+//
+//            resultArea.setText(text);
+//
+//            System.out.println("DECODE DOONE");
+//        }catch(Exception e){
+//            e.printStackTrace();
+//            Alert alert = new Alert(Alert.AlertType.ERROR);
+//
+//            alert.setTitle("Error");
+//            alert.setHeaderText("Operation failed");
+//            alert.setContentText(e.getMessage());
+//
+//            alert.showAndWait();
+//        }
+//    }
+//
+//}
 package com.stegovault.controller;
 
 import com.stegovault.model.EncryptionConfig;
@@ -9,88 +105,131 @@ import com.stegovault.service.impl.CryptoServiceImpl;
 import com.stegovault.service.impl.HashServiceImpl;
 import com.stegovault.service.impl.StegoServiceImpl;
 import com.stegovault.service.impl.ValidationServiceImpl;
-import com.stegovault.util.FileUtil;
-import com.stegovault.util.ImageUtil;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.scene.control.Alert;
-import javax.swing.*;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Path;
 
 public class ExtractController {
 
-    @FXML
-    private TextField imagePathField;
-    @FXML
-    private PasswordField passwordField;
-    @FXML
-    private TextArea resultArea;
+    @FXML private VBox rootPane;
+    @FXML private TextField imagePathField;
+    @FXML private PasswordField passwordField;
+    @FXML private Label statusLabel;
+    @FXML private Label passwordHint;
+    @FXML private ProgressBar progressBar;
+    @FXML private TextArea outputArea;
 
-    private final CryptoService crypto=new CryptoServiceImpl();
-    private final ValidationService validation=new ValidationServiceImpl();
-    private final HashService hash=new HashServiceImpl();
-    private final StegoService stego= new StegoServiceImpl(crypto, validation, hash);
+    private final CryptoService crypto = new CryptoServiceImpl();
+    private final ValidationService validation = new ValidationServiceImpl();
+    private final HashService hash = new HashServiceImpl();
 
-    public void onChooseImage(){
-        System.out.println("choose image");
+    private final StegoService stego =
+            new StegoServiceImpl(crypto, validation, hash);
 
+    private BufferedImage loadedImage = null;
+
+    @FXML
+    public void initialize() {
+
+        passwordField.textProperty().addListener((obs, old, val) -> {
+            if (val.isEmpty()) {
+                passwordHint.setText("Min 8 chars · uppercase · lowercase · digit");
+                passwordHint.setStyle("");
+            } else if (validation.validatePassword(val)) {
+                passwordHint.setText("✔ Password valid");
+                passwordHint.setStyle("-fx-text-fill: #4caf7d;");
+            } else {
+                passwordHint.setText("✘ Min 8 chars · uppercase · lowercase · digit");
+                passwordHint.setStyle("-fx-text-fill: #e06c75;");
+            }
+        });
+    }
+
+    public void onBack(ActionEvent event) throws Exception {
+        MainController.loadView("/fxml/main-view.fxml", rootPane);
+    }
+
+    public void onChooseImage() {
         FileChooser chooser = new FileChooser();
-
         chooser.setTitle("Choose Image");
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.bmp")
+        );
 
-        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images", "*.png", "*.bmp"));
-
-        File file = chooser.showOpenDialog(new Stage());
+        File file = chooser.showOpenDialog(getStage());
 
         if (file != null) {
             imagePathField.setText(file.getAbsolutePath());
+            try {
+                loadedImage = ImageIO.read(file);
+                setStatus("Image loaded: " +
+                        loadedImage.getWidth() + "×" +
+                        loadedImage.getHeight(), false);
+            } catch (Exception e) {
+                setStatus("Could not read image.", true);
+                loadedImage = null;
+            }
         }
     }
 
     public void onExtract() {
-        System.out.println("extract");
 
-        try{
-            Path imagePath= Path.of(imagePathField.getText());
+        String imagePath = imagePathField.getText().trim();
+        String password = passwordField.getText();
 
-            String password=passwordField.getText();
-
-            BufferedImage image= ImageUtil.read(imagePath);
-
-            EncryptionConfig config=new EncryptionConfig(password,new byte[16], new byte[16], 65536);
-
-            String text=stego.decode(image, config);
-
-            Path output=Path.of("decoded.txt");
-            FileUtil.writeText(text, output);
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-
-            alert.setTitle("Success");
-            alert.setHeaderText(null);
-            alert.setContentText("text extracted successfully and saved to decoded.txt.");
-
-            alert.showAndWait();
-
-            resultArea.setText(text);
-
-            System.out.println("DECODE DOONE");
-        }catch(Exception e){
-            e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-
-            alert.setTitle("Error");
-            alert.setHeaderText("Operation failed");
-            alert.setContentText(e.getMessage());
-
-            alert.showAndWait();
+        if (imagePath.isEmpty()) {
+            setStatus("Please select an image.", true);
+            return;
         }
+
+        if (!validation.validatePassword(password)) {
+            setStatus("Invalid password.", true);
+            return;
+        }
+
+        progressBar.setVisible(true);
+        progressBar.setManaged(true);
+        progressBar.setProgress(-1);
+
+        new Thread(() -> {
+            try {
+                BufferedImage image = ImageIO.read(Path.of(imagePath).toFile());
+
+                String extracted = stego.decode(image, password);
+
+                Platform.runLater(() -> {
+                    progressBar.setProgress(1.0);
+                    outputArea.setText(extracted);
+                    setStatus("✔ Message extracted successfully", false);
+                });
+
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    e.printStackTrace();
+                    progressBar.setVisible(false);
+                    progressBar.setManaged(false);
+                    setStatus("Error: " + e.getMessage(), true);
+                });
+            }
+        }).start();
     }
 
+    private void setStatus(String message, boolean error) {
+        statusLabel.setText(message);
+        statusLabel.getStyleClass().removeAll("status-ok", "status-err");
+        statusLabel.getStyleClass().add(error ? "status-err" : "status-ok");
+    }
+
+    private Stage getStage() {
+        return (Stage) imagePathField.getScene().getWindow();
+    }
 }

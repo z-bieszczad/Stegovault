@@ -1,6 +1,7 @@
 package com.stegovault.service.impl;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 import com.stegovault.exception.CryptoException;
 import com.stegovault.model.EncryptionConfig;
@@ -68,5 +69,40 @@ public class StegoServiceImpl implements StegoService {
 
         return new String(decrypted);
     }
+
+
+    @Override
+    public String decode(BufferedImage image, String password) throws CryptoException {
+
+
+        int totalBits = image.getWidth() * image.getHeight() * 3;
+
+        int[] bits = LSBHelper.decodeBitsFromImage(image, totalBits);
+
+
+        byte[] payload = LSBHelper.bitsToBytes(bits);
+
+
+        ParsedPayload data = PayloadHelper.parsePayload(payload);
+
+        System.out.println("SALT: " + Arrays.toString(data.salt()));
+        System.out.println("IV: " + Arrays.toString(data.iv()));
+        System.out.println("HASH: " + Arrays.toString(data.hash()));
+        System.out.println("ENCRYPTED SIZE: " + data.encryptedData().length);
+
+        EncryptionConfig config = new EncryptionConfig(
+                password,
+                data.salt(),
+                data.iv(),
+                100000
+        );
+
+
+        byte[] decrypted = cryptoService.decrypt(data.encryptedData(), config);
+
+
+        return new String(decrypted);
+    }
+
 
 }

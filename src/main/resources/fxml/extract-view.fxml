@@ -1,4 +1,4 @@
-<!-- <?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
 <?import java.util.*?>
@@ -8,23 +8,53 @@
 
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.stegovault.controller.ExtractController"
-      spacing="15"
-      alignment="CENTER">
+      fx:id="rootPane"
+      spacing="10"
+      prefWidth="500"
+      prefHeight="440"
+      style="-fx-padding: 32;">
 
-    <TextField fx:id="imagePathField"
-               promptText="Image file"/>
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Button text="← Back" styleClass="button-ghost" onAction="#onBack"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Extract Message" styleClass="label-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+    </HBox>
 
-    <Button text="Choose Image"
-            onAction="#onChooseImage"/>
+    <Separator/>
 
+    <Label text="CARRIER IMAGE" styleClass="label-section"/>
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <TextField fx:id="imagePathField"
+                   promptText="No file selected"
+                   editable="false"
+                   HBox.hgrow="ALWAYS"/>
+        <Button text="Browse" onAction="#onChooseImage"/>
+    </HBox>
+
+    <Label text="PASSWORD" styleClass="label-section"/>
     <PasswordField fx:id="passwordField"
-                   promptText="Password"/>
+                   promptText="Enter password"/>
+    <Label fx:id="passwordHint"
+           text="Min 8 chars · uppercase · lowercase · digit"
+           styleClass="label-subtitle"/>
 
     <Button text="EXTRACT"
-            onAction="#onExtract"/>
+            onAction="#onExtract"
+            styleClass="button-primary"
+            maxWidth="Infinity"/>
 
-    <TextArea fx:id="resultArea"
-              prefHeight="200"
-              editable="false"/>
+    <ProgressBar fx:id="progressBar"
+                 prefHeight="6"
+                 progress="0"
+                 visible="false"
+                 managed="false"/>
 
-</VBox> -->
+    <Label fx:id="statusLabel"/>
+
+    <Label text="OUTPUT" styleClass="label-section"/>
+    <TextArea fx:id="outputArea"
+              prefHeight="120"
+              wrapText="true"/>
+
+</VBox>
