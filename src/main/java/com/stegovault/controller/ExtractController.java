@@ -14,6 +14,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -59,6 +60,11 @@ public class ExtractController {
                 passwordHint.setStyle("-fx-text-fill: #e06c75;");
             }
         });
+
+//        rootPane.setOnDragDropped(event->{ if( event.getGestureSource() !=rootPane && event.getDragboard().hasFiles()){
+//             event.acceptTransferModes(javafx.scene.input.TransferMode.COPY);   }
+//            event.consume();
+//        });
     }
 
     public void onBack(ActionEvent event) throws Exception {

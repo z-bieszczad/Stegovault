@@ -16,11 +16,12 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
+import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -38,6 +39,8 @@ public class EmbededController {
     @FXML private ProgressBar capacityBar;
     @FXML private Label capacityLabel;
     @FXML private HBox capacityRow;
+    @FXML private ImageView originalImageView;
+    @FXML private ImageView encodedImageView;
 
     private final CryptoService crypto = new CryptoServiceImpl();
     private final ValidationService validation = new ValidationServiceImpl();
@@ -87,6 +90,8 @@ public class EmbededController {
             imagePathField.setText(file.getAbsolutePath());
             try {
                 loadedImage = ImageIO.read(file);
+                originalImageView.setImage(new Image(file.toURI().toString()));
+                encodedImageView.setImage(null);
                 // updateCapacity();
                 setStatus("Image loaded: " + loadedImage.getWidth() + "×" + loadedImage.getHeight(), false);
             } catch (Exception e) {
@@ -133,6 +138,7 @@ public class EmbededController {
                     setStatus("✔ Saved to: " + outputPath, false);
                     showAlert(Alert.AlertType.INFORMATION, "Success",
                             "Message embedded successfully.\nSaved to: " + outputPath);
+                    encodedImageView.setImage(new Image(outputPath.toUri().toString()));
                 });
 
             } catch (Exception e) {

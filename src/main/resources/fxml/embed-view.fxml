@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.image.ImageView?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.stegovault.controller.EmbededController"
       fx:id="rootPane"
@@ -47,6 +48,26 @@
         <Label text="Capacity:" styleClass="label-subtitle"/>
         <ProgressBar fx:id="capacityBar" prefWidth="280" prefHeight="8"/>
         <Label fx:id="capacityLabel" styleClass="label-subtitle"/>
+    </HBox>
+
+    <HBox spacing="12" alignment="CENTER">
+
+        <VBox alignment="CENTER">
+            <Label text="Original"/>
+            <ImageView fx:id="originalImageView"
+                       fitWidth="220"
+                       fitHeight="220"
+                       preserveRatio="true"/>
+        </VBox>
+
+        <VBox alignment="CENTER">
+            <Label text="Encoded"/>
+            <ImageView fx:id="encodedImageView"
+                       fitWidth="220"
+                       fitHeight="220"
+                       preserveRatio="true"/>
+        </VBox>
+
     </HBox>
 
     <Label text="PASSWORD" styleClass="label-section"/>
