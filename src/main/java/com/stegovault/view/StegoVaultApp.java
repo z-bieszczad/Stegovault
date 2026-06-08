@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
+import javafx.scene.image.Image;
 
 public class StegoVaultApp extends Application {
 
@@ -17,6 +18,9 @@ public class StegoVaultApp extends Application {
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
         stage.setTitle("StegoVault");
+        stage.getIcons().add(
+                new Image(getClass().getResourceAsStream("/icons/StegoVaultIcon.png"))
+        );
         stage.setScene(scene);
         Rectangle2D screen = Screen.getPrimary().getVisualBounds();
         double w = screen.getWidth()  * 0.7;
