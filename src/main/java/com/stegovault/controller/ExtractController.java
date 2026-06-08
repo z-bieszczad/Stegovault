@@ -22,6 +22,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Path;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 
 public class ExtractController {
 
@@ -126,6 +128,20 @@ public class ExtractController {
                 });
             }
         }).start();
+    }
+
+
+    public void onCopyResult() {
+        String text = outputArea.getText();
+
+        if (text == null || text.isEmpty()) return;
+
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putString(text);
+        clipboard.setContent(content);
+
+        setStatus("copied to clipboard ", false);
     }
 
     private void setStatus(String message, boolean error) {

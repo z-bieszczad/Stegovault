@@ -56,5 +56,8 @@
     <TextArea fx:id="outputArea"
               prefHeight="120"
               wrapText="true"/>
+    <Button text="COPY" onAction="#onCopyResult"
+            styleClass="button-ghost"/>
 
 </VBox>
+
