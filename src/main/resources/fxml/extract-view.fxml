@@ -24,9 +24,9 @@
     <Separator/>
 
     <Label text="CARRIER IMAGE" styleClass="label-section"/>
-    <HBox spacing="8" alignment="CENTER_LEFT">
+    <HBox fx:id="imageDropZone" spacing="8" alignment="CENTER_LEFT">
         <TextField fx:id="imagePathField"
-                   promptText="No file selected"
+                   promptText="No file selected — browse or drag &amp; drop"
                    editable="false"
                    HBox.hgrow="ALWAYS"/>
         <Button text="Browse" onAction="#onChooseImage"/>
@@ -52,12 +52,23 @@
 
     <Label fx:id="statusLabel"/>
 
+    <Label text="OUTPUT FILE (OPTIONAL)" styleClass="label-section"/>
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <TextField fx:id="outputPathField"
+                   promptText="Save extracted text to .txt file..."
+                   editable="false"
+                   HBox.hgrow="ALWAYS"/>
+        <Button text="Browse" onAction="#onChooseOutputPath" prefWidth="88"/>
+    </HBox>
+
     <Label text="OUTPUT" styleClass="label-section"/>
     <TextArea fx:id="outputArea"
               prefHeight="120"
               wrapText="true"/>
-    <Button text="COPY" onAction="#onCopyResult"
-            styleClass="button-ghost"/>
+    <HBox spacing="8">
+        <Button text="COPY" onAction="#onCopyResult" styleClass="button-ghost"/>
+        <Button text="SAVE" onAction="#onSaveResult" styleClass="button-ghost"/>
+    </HBox>
 
 </VBox>
 

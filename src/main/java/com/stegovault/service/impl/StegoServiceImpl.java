@@ -1,7 +1,7 @@
 package com.stegovault.service.impl;
 
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
 
 import com.stegovault.exception.CryptoException;
 import com.stegovault.model.EncryptionConfig;
@@ -33,43 +33,30 @@ public class StegoServiceImpl implements StegoService {
         //bytestobits
         //validation
         // enncodebitstoimage
-        byte[] plainData=text.getBytes();
+
+        byte[] plainData=text.getBytes(StandardCharsets.UTF_8);
+        int estimatedPayload = 4 + 16 + 16 + 32 + plainData.length + 16;
+
+        if(!validationService.validateCapacity(image, estimatedPayload)){
+            throw new IllegalArgumentException(" image to small ");
+        }
+       
 
         byte[] encrypted=cryptoService.encrypt(plainData, config);
 
         byte[] hash = hashService.generateHash(plainData);
 
-        byte[] payload= PayloadHelper.buildPayload(encrypted, config.salt(), config.iv(), hash );
+        byte[] payload= PayloadHelper.buildPayload(encrypted, config.salt(), config.iv(), hash);
 
         int[] bits= LSBHelper.bytesToBits(payload);
 
 
-        if(!validationService.validateCapacity(image, payload.length)){
-            throw new IllegalArgumentException(" image to small ");
-        }
+
 
         LSBHelper.encodeBitsToImage(image, bits);
 
         return image;
     }
-
-    @Override
-    public String decode(BufferedImage image, EncryptionConfig config) throws CryptoException{
-
-        int totalBits=image.getWidth()*image.getHeight()*3;
-
-        int[] bits=LSBHelper.decodeBitsFromImage(image, totalBits);
-
-        byte[] payload= LSBHelper.bitsToBytes(bits);
-
-        ParsedPayload data=PayloadHelper.parsePayload(payload);
-
-        EncryptionConfig actualConfig = new EncryptionConfig(config.password(), data.salt(), data.iv(), config.iterations());
-        byte[] decrypted = cryptoService.decrypt(data.encryptedData(), actualConfig);
-
-        return new String(decrypted);
-    }
-
 
     @Override
     public String decode(BufferedImage image, String password) throws CryptoException {
@@ -94,9 +81,9 @@ public class StegoServiceImpl implements StegoService {
 
 
         byte[] decrypted = cryptoService.decrypt(data.encryptedData(), config);
+        hashService.verifyHash(decrypted, hashService.generateHash(data.hash()));
 
-
-        return new String(decrypted);
+        return new String(decrypted, StandardCharsets.UTF_8);
     }
 
 

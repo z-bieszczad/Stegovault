@@ -94,3 +94,7 @@
 .capacity-full .bar     { -fx-background-color: -color-error; }
 
 .separator .line { -fx-border-color: -color-border; }
+
+.text-field.drop-target, .password-field.drop-target {
+    -fx-border-color: #4caf7d;
+}

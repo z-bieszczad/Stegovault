@@ -10,7 +10,6 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.image.ImageView?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.stegovault.controller.EmbededController"
       fx:id="rootPane"
@@ -30,15 +29,15 @@
     <Region prefHeight="4"/>
 
     <Label text="TEXT FILE" styleClass="label-section"/>
-    <HBox spacing="8" alignment="CENTER_LEFT">
-        <TextField fx:id="txtPathField" promptText="No file selected"
+    <HBox fx:id="txtDropZone" spacing="8" alignment="CENTER_LEFT">
+        <TextField fx:id="txtPathField" promptText="No file selected — browse or drag &amp; drop"
                    prefWidth="370" editable="false" HBox.hgrow="ALWAYS"/>
         <Button text="Browse" onAction="#onChooseTXT" prefWidth="88"/>
     </HBox>
 
     <Label text="CARRIER IMAGE  (PNG / BMP)" styleClass="label-section"/>
-    <HBox spacing="8" alignment="CENTER_LEFT">
-        <TextField fx:id="imagePathField" promptText="No file selected"
+    <HBox fx:id="imageDropZone" spacing="8" alignment="CENTER_LEFT">
+        <TextField fx:id="imagePathField" promptText="No file selected — browse or drag &amp; drop"
                    prefWidth="370" editable="false" HBox.hgrow="ALWAYS"/>
         <Button text="Browse" onAction="#onChooseImage" prefWidth="88"/>
     </HBox>
@@ -48,26 +47,6 @@
         <Label text="Capacity:" styleClass="label-subtitle"/>
         <ProgressBar fx:id="capacityBar" prefWidth="280" prefHeight="8"/>
         <Label fx:id="capacityLabel" styleClass="label-subtitle"/>
-    </HBox>
-
-    <HBox spacing="12" alignment="CENTER">
-
-        <VBox alignment="CENTER">
-            <Label text="Original"/>
-            <ImageView fx:id="originalImageView"
-                       fitWidth="220"
-                       fitHeight="220"
-                       preserveRatio="true"/>
-        </VBox>
-
-        <VBox alignment="CENTER">
-            <Label text="Encoded"/>
-            <ImageView fx:id="encodedImageView"
-                       fitWidth="220"
-                       fitHeight="220"
-                       preserveRatio="true"/>
-        </VBox>
-
     </HBox>
 
     <Label text="PASSWORD" styleClass="label-section"/>
@@ -81,9 +60,6 @@
 
     <Button text="ENCODE &amp; SAVE" onAction="#onEncode"
             styleClass="button-primary" maxWidth="Infinity"/>
-
-    <ProgressBar fx:id="progressBar" maxWidth="Infinity" prefHeight="6"
-                 progress="0" visible="false" managed="false"/>
 
     <Label fx:id="statusLabel" text="" wrapText="true" maxWidth="Infinity"/>
 

@@ -55,8 +55,15 @@ public class PayloadHelper {
             throw new IllegalArgumentException("Invalid payload: too short");
         }
         ByteBuffer buffer=ByteBuffer.wrap(payload);
+        int length = buffer.getInt();
 
-        int length=buffer.getInt();
+        int expectedTotal = 4 + 16 + 16 + 32 + length;
+        if (length < 0 || payload.length < expectedTotal) {
+            throw new IllegalArgumentException(
+                "Invalid payload: declared length " + length +
+                " but only " + (payload.length - 68) + " bytes available"
+            );
+        }
 
         byte[] salt=new byte[16];
         buffer.get(salt);
