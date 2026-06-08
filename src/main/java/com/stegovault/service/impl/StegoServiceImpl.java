@@ -52,6 +52,9 @@ public class StegoServiceImpl implements StegoService {
 
 
 
+        if(!validationService.validateCapacity(image, payload.length)){
+            throw new IllegalArgumentException(" image to small ");
+        }
 
         LSBHelper.encodeBitsToImage(image, bits);
 
