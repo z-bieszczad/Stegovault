@@ -81,10 +81,29 @@ public class StegoServiceImpl implements StegoService {
 
 
         byte[] decrypted = cryptoService.decrypt(data.encryptedData(), config);
-        hashService.verifyHash(decrypted, hashService.generateHash(data.hash()));
+        hashService.verifyHash(decrypted, data.hash());
 
         return new String(decrypted, StandardCharsets.UTF_8);
     }
 
+    @Override
+    public String decode(BufferedImage image, EncryptionConfig config) throws CryptoException {
+        int totalBits = image.getWidth() * image.getHeight() * 3;
+        int[] bits = LSBHelper.decodeBitsFromImage(image, totalBits);
+        byte[] payload = LSBHelper.bitsToBytes(bits);
 
+        ParsedPayload data = PayloadHelper.parsePayload(payload);
+
+        EncryptionConfig actualConfig = new EncryptionConfig(
+                config.password(),
+                data.salt(),
+                data.iv(),
+                config.iterations()
+        );
+
+        byte[] decrypted = cryptoService.decrypt(data.encryptedData(), actualConfig);
+        hashService.verifyHash(decrypted, data.hash());
+
+        return new String(decrypted, StandardCharsets.UTF_8);
+    }
 }

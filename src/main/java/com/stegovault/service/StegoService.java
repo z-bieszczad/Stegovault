@@ -9,4 +9,5 @@ public interface StegoService
 {
     BufferedImage encode(String text, EncryptionConfig config, BufferedImage image) throws CryptoException;
     String decode(BufferedImage image, String password) throws CryptoException;
+    String decode(BufferedImage image, EncryptionConfig config) throws CryptoException;
 }
